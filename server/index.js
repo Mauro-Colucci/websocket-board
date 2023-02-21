@@ -63,9 +63,59 @@ const io = new Server(http, {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors());
 
 io.on("connection", (socket) => {
   console.log(`${socket.id} user just connected!`);
+
+  socket.on("createTask", (data) => {
+    const newTask = { id: uid(), title: data, comments: [] };
+    tasks["pending"].items.push(newTask);
+
+    io.sockets.emit("tasks", tasks);
+  });
+
+  socket.on("addComment", (data) => {
+    const { category, userId, comment, id } = data;
+    const taskItems = tasks[category].items;
+    for (let i = 0; i < taskItems.length; i++) {
+      if (taskItems[i].id === id) {
+        taskItems[i].comments.push({
+          name: userId,
+          text: comment,
+          id: uid(),
+        });
+
+        socket.emit("comments", taskItems[i].comments);
+      }
+    }
+  });
+
+  socket.on("fetchComments", (data) => {
+    const { category, id } = data;
+    const taskItems = tasks[category].items;
+    for (let i = 0; i < taskItems.length; i++) {
+      if (taskItems[i].id === id) {
+        socket.emit("comments", taskItems[i].comments);
+      }
+    }
+  });
+
+  socket.on("taskDragged", (data) => {
+    const { source, destination } = data;
+    const itemMoved = {
+      ...tasks[source.droppableId].items[source.index],
+    };
+    tasks[source.droppableId].items.splice(source.index, 1);
+    tasks[destination.droppableId].items.splice(
+      destination.index,
+      0,
+      itemMoved
+    );
+
+    io.sockets.emit("tasks", tasks);
+  });
+
   socket.on("disconnect", () => {
     socket.disconnect();
     console.log("A user disconnected");

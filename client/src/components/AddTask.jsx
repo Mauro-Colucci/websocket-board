@@ -1,11 +1,11 @@
 import { useRef } from "react";
 
-const AddTask = () => {
+const AddTask = ({ socket }) => {
   const taskRef = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(taskRef.current.value);
+    socket.emit("createTask", taskRef.current.value);
     taskRef.current.value = "";
   };
   return (

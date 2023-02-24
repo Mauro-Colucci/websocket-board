@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
+//refactor with https://dndkit.com/, since react-beautiful-dnd is no longer mantained
+
 const TasksContainer = ({ socket }) => {
   const [tasks, setTasks] = useState({});
 

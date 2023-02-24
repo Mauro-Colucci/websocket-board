@@ -23,7 +23,7 @@ const Comments = () => {
       comment: commentRef.current.value,
       category,
       id,
-      userId: localStorage.getItem("userid"),
+      userId: localStorage.getItem("userId"),
     });
     commentRef.current.value = "";
   };

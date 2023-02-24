@@ -71,8 +71,8 @@ io.on("connection", (socket) => {
   socket.on("createTask", (data) => {
     const newTask = { id: uid(), title: data, comments: [] };
     tasks["pending"].items.push(newTask);
-
     io.sockets.emit("tasks", tasks);
+    //socket.emit("tasks", tasks);
   });
 
   socket.on("addComment", (data) => {
@@ -113,7 +113,8 @@ io.on("connection", (socket) => {
       itemMoved
     );
 
-    io.sockets.emit("tasks", tasks);
+    //io.sockets.emit("tasks", tasks);
+    socket.emit("tasks", tasks);
   });
 
   socket.on("disconnect", () => {
